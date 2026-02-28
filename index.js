@@ -1,184 +1,230 @@
-function add (...num){
-  return  num.reduce((acc,curNum) => acc + curNum,0)
+
+const add = (a,b) => a+b;
+
+const subtract = (a,b) => a-b;
+
+const multiply = (a,b) => a*b;
+
+const divide = (a,b) => a / b;
+
+let num1 = "";
+let operator = "";
+let num2 ="";
+shouldResetDisplay = false;
+
+function operate(operator,a,b){
+    return operator(a,b)
 }
 
+const container = document.querySelector("#container")
+container.style.cssText = "width:500px;height:400px;border:2px solid black;border-radius:5px;display:flex;flex-wrap:wrap;justify-content:space-evenly;gap:30px";
 
-function subtract (...num) {
-    if (num.length === 0) return 0;
-  return  num.reduce((acc,curr)=> acc- curr)
-
-}
-
-
-function multiply (... num) {
-  return num.reduce((acc,cur)=> acc * cur,1)
-}
+const display = document.createElement("div");
+display.style.cssText = "width:500px;height:60px;border:2px solid black; border-radius-top-right:3px;border-radius-top-left:3px;font-size:30px";
+display.textContent = "0"
+container.appendChild(display)
 
 
-function divide (...num) {
-    if (num.length===0) return 0
- return num.reduce((acc,cur) =>{
-    if (cur ===0) throw new Error("Cannot divide by zero")
+const keys = [0,1,2,3,4,5,6,7,8,9,"=","*","-","+","/"]
 
-        return acc/ cur
- })
-}
+keys.forEach(item =>{
+const button = document.createElement("button")
+button.style.cssText = "width:50px;height:40px;border:2px solid black;border-radius:5px; font-weight:bold;font-size:25px"
 
+button.textContent = item
+container.appendChild(button)
 
-// Step 2
-let a;
+button.addEventListener("click",()=>{
+  if(typeof item =="number"){
+    updateVariable(item)
+  }
+  
+  else if (item ==="+" || item==="-" ||item ==="*" || item ==="/"){
+      handleResult(item)
+  }
 
-let b;
-
-let addition = a + b;
-
-let subtraction = a - b;
-
-let multiplication = a * b;
-
-let division = a / b
-
-// step 3
-
-function operate ( operator,a, b){
-    if (operator ==="+"){
-        return add(a,b)
-    }
-   else if (operator ==="-"){
-    return subtract(a,b)
-   }
-
-   else if (operator ==="*"){
-    return multiply(a,b)
-   }
-   else if (operator === "/"){
-    return divide(a,b)
-   }
-}
-
-console.log(operate("+",6,3));
-
-// step 4: Calculator button
-
-const container = document.querySelector("#button")
-
-const values = ["0","1","2","3","4","5","6","7","8","9","+","-","*","/",".","=", "c"]
-
-values.forEach(val=>{
-    const btn = document.createElement("button");
-    btn.textContent = val;
-    btn.style.backgroundColor = "lightgray";
-    btn.style.color= "black"
-    btn.style.width="20px"
-    btn.style.textAlign = "center"
-    btn.style.verticalAlign="middle"
-    btn.style.margin = "4px"
-    btn.style.marginTop = "10px"
-
-    btn.style.textAlign = "center"
-    container.appendChild(btn)
-})
-
-
-const calculatorBody = document.querySelector("#display")
-const div = document.createElement("div")
-div.style.width = "200px";
-div.style.height = "200px"
-div.style.backgroundColor="#2E2E2E";
-
-div.style.margin = "auto"
-div.style.paddingTop ="10px"
-calculatorBody.appendChild(div)
-
-
-
-const display = document.createElement("div")
-// display.textContent = "0123456789"
-display.id = "screen";
-display.style.textAlign = "right";
-display. style.width= "200px"
-display.style.height = "60px"
-display.style.backgroundColor = "lightgray"
-
-
-div.appendChild(display)
-div.appendChild(container)
-
-
-// step 5
-
-let currentNumber = "";
-let firstNumber = null;
-let operator = null;
-
-
-function  populate () {
-const display = document.querySelector("#screen")
-const buttons = document.querySelectorAll("#button button")
-
-buttons.forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const val = btn.textContent
-
-// Digits or decimal
-    if(!isNaN(val) || val ==="."){
-      currentNumber +=val;
-      display.textContent = currentNumber
-    }
-
-    // To clear
-    else if(val=== "c"){
-      currentNumber = "";
-      firstNumber= null;
-      operator = null;
-      display.textContent ="";
-    }
-    //Perform calculation
-    else if(val === "="){
-      if(firstNumber !==null && operator !==null && currentNumber !=="") {
-        const result = operate(operator,Number(firstNumber), Number(currentNumber));
-        display.textContent = result
-        currentNumber = result.toString()
-        firstNumber = null;
-        operator = null;
-      }
-    }
-    else {
-      // For Operator (+,-,*,/)
-      if(currentNumber !==""){
-        if(firstNumber !== null && operator !==null){
-          const result = operate(operator,Number(firstNumber), Number(currentNumber))
-          display.textContent = result;
-          firstNumber = result.toString()
-          currentNumber = ""
-        }else {
-          firstNumber = currentNumber
-          currentNumber = ""
-        }
-        operator = val
-      }
-    }
-  })
-})
-}
-
-populate()
-
-// creating backspace button
-
-const backSpaceButton = document.createElement('button')
-backSpaceButton.textContent = "⬅️"
-backSpaceButton.style.color = "black"
-backSpaceButton.style.width = "40px"
-backSpaceButton.style.height = "30px"
-backSpaceButton.style.backgroundColor = "lightgray"
-backSpaceButton.style.display = "flex"
-calculatorBody.style.margin= "4px"
-container.appendChild(backSpaceButton)
-
-backSpaceButton.addEventListener("click", ()=>{
-  if (currentNumber.length > 0){
-    currentNumber = currentNumber.slice(0,-1)
-    display.textContent = currentNumber
+  else if (item ==="="){
+    calculateResult()
   }
 })
+})
+
+const clearButton = document.createElement("button");
+clearButton.style.cssText = "width:50px;height:40px;border:2px solid black;border-radius:5px; font-weight:bold;font-size:15px";
+clearButton.textContent = "CLR"
+container.appendChild(clearButton)
+
+clearButton.addEventListener("click",()=>{
+    display.textContent = "0"
+})
+
+function updateVariable(digit){
+  if (shouldResetDisplay) {
+    display.textContent = "";
+    shouldResetDisplay = false;
+  }
+   if(operator !=="" && num2===""){
+    display.textContent = ""
+   }
+   else if(display.textContent ==="0"){
+    display.textContent = ""
+   }
+   display.textContent += digit;
+
+    if(operator===""){
+    num1 = display.textContent
+   }
+   else{
+    num2 = display.textContent
+   }
+}
+
+
+function calculateResult(){
+  if(num1===""|| operator===""|| num2===""){
+    return
+  }
+
+ let firstNum = +(num1)
+ let secondNum = +(num2)
+
+ if(operator ==="/" && secondNum ===0){
+    display.textContent = "Error"
+
+    num1="";
+    num2 ="";
+    operator ="";
+    return
+  }
+
+  let result;
+  if (operator ==="+"){
+    result = operate(add,firstNum,secondNum)
+  }
+  else if(operator === "-"){
+    result = operate(subtract,firstNum,secondNum)
+  }
+  else if (operator ==="*") {
+    result = operate(multiply,firstNum,secondNum)
+  }
+  else if(operator ==="/"){
+    result = operate(divide,firstNum,secondNum)
+  }
+
+
+  result = +(result.toFixed(2))
+
+  display.textContent = result;
+  num1 = result.toString();
+  num2 = "";
+  operator = "";
+  shouldResetDisplay = true;
+}
+
+function handleResult(newOperator){
+ if (num1 !=="" && operator !=="" && num2 !==""){
+
+   calculateResult()
+ }
+ else if(num1 !=="" && operator ===""){
+    num1 = display.textContent;
+ }
+    operator = newOperator
+    
+}
+
+const decimalBtn = document.createElement("button");
+decimalBtn.style.cssText = "width:50px;height:40px;border:2px solid black;border-radius:5px; font-weight:bold;font-size:25px";
+decimalBtn.textContent = "."
+container.appendChild(decimalBtn)
+
+decimalBtn.addEventListener("click", ()=>{
+
+  if (shouldResetDisplay){
+    display.textContent = "0";
+    shouldResetDisplay = false;
+  }
+  if(!display.textContent.includes(".")){
+    display.textContent += "."
+  }
+  if (operator ==="") {
+    num1 = display.textContent
+  }
+  else{
+    num2 = display.textContent
+  }
+})
+
+
+const backspaceBtn = document.createElement("button");
+backspaceBtn.style.cssText = "width:50px;height:40px;border:2px solid black;border-radius:5px; font-weight:bold;font-size:25px";
+
+backspaceBtn.textContent = "🔙"
+container.appendChild(backspaceBtn)
+
+backspaceBtn.addEventListener("click", ()=>{
+ display.textContent = display.textContent.slice(0,-1)
+ if (display.textContent===""){
+  display.textContent = "0"
+ }
+  if(operator ===""){
+    num1= display.textContent
+  }
+  else{
+    num2 = display.textContent
+  }
+})
+
+
+document.addEventListener("keydown", (event) => {
+    const key = event.key;
+    
+    // Numbers (0-9)
+    if(key >= '0' && key <= '9'){
+        updateVariable(parseInt(key));
+    }
+    // Operators (+, -, *, /)
+    else if(key === '+' || key === '-' || key === '*' || key === '/'){
+        handleResult(key);
+    }
+    // Equals (Enter or =)
+    else if(key === 'Enter' || key === '='){
+        event.preventDefault();
+        calculateResult();
+    }
+    // Decimal point (.)
+    else if(key === '.'){
+        if(shouldResetDisplay){
+            display.textContent = "0";
+            shouldResetDisplay = false;
+        }
+        if(!display.textContent.includes(".")){
+            display.textContent += ".";
+        }
+        if(operator === ""){
+            num1 = display.textContent;
+        } else {
+            num2 = display.textContent;
+        }
+    }
+    // Backspace
+    else if(key === 'Backspace'){
+        display.textContent = display.textContent.slice(0, -1);
+        if(display.textContent === ""){
+            display.textContent = "0";
+        }
+        if(operator === ""){
+            num1 = display.textContent;
+        } else {
+            num2 = display.textContent;
+        }
+    }
+    // Clear (Escape)
+    else if(key === 'Escape'){
+        display.textContent = "0";
+        num1 = "";
+        num2 = "";
+        operator = "";
+        shouldResetDisplay = false;
+    }
+});
